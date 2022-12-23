@@ -3,6 +3,7 @@ import flatpickr from 'flatpickr';
 // Додатковий імпорт стилів
 import 'flatpickr/dist/flatpickr.min.css';
 
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 //
 
 const datetimePicker = document.querySelector('#datetime-picker');
@@ -22,7 +23,7 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    // console.log(selectedDates[0]);
 
     if (selectedDates[0] - new Date() > 1000) {
       btnStart.removeAttribute('disabled');
@@ -34,7 +35,7 @@ const options = {
         { once: true }
       );
     } else {
-      window.alert('Please choose a date in the future');
+      Notify.warning('Please choose a date in the future');
     }
   },
 };
@@ -45,16 +46,18 @@ function onBtnStart(selectedDates) {
   timerId = setInterval(() => {
     const currentTimeEnd = selectedDates - new Date();
     const time = convertMs(currentTimeEnd);
-    dataDays.textContent = time.days.toString().padStart(2, 0);
-    dataHours.textContent = time.hours.toString().padStart(2, 0);
-    dataMinutes.textContent = time.minutes.toString().padStart(2, 0);
-    dataSeconds.textContent = time.seconds.toString().padStart(2, 0);
+    dataDays.textContent = addLeadingZero(time.days);
+    dataHours.textContent = addLeadingZero(time.hours);
+    dataMinutes.textContent = addLeadingZero(time.minutes);
+    dataSeconds.textContent = addLeadingZero(time.seconds);
     btnStart.setAttribute('disabled', 'true');
     if (currentTimeEnd < 1000) {
       clearInterval(timerId);
     }
-    console.log(time);
   }, 1000);
+}
+function addLeadingZero(value) {
+  return `${value}`.padStart(2, '0');
 }
 
 function convertMs(ms) {
